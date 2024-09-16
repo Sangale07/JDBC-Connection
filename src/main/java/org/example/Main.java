@@ -37,6 +37,31 @@ public class Main {
               }
           return list;
           }
+          public static void updateSalary(String name ,  Double salary) throws CustomException{
+          String updateQuery = "update employee set salary = ? where name = ?";
+
+          try(Connection connection = DriverManager.getConnection(url ,username, password);
+              PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)){
+
+              preparedStatement.setDouble(1,salary);
+              preparedStatement.setString(2,name);
+
+              int result = preparedStatement.executeUpdate();
+              if(result > 0){
+                  System.out.println("Update Successfully");
+
+              }
+              else{
+                  System.out.println("data not found");
+              }
+
+
+          }
+          catch(SQLException e) {
+              throw new CustomException("Error updating salary in database", e);
+          }
+
+          }
 
     public static void main(String[] args) {
         try{
@@ -45,10 +70,15 @@ public class Main {
                 EmployeePayroll emp = result.get(i);
                 System.out.println(emp.getName() +"-->" +emp.getSalary());
             }
+            Main.updateSalary("Rushi" , 300000.0);
+
         }
         catch(SQLException e){
             e.printStackTrace();
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
 }
